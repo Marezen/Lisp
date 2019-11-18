@@ -155,5 +155,80 @@ funkcija sortiraj: sortira listu
                  (novi-cvorovi (cdr potomci) cvorovi)))))
 
 //i JOS JEDAN ALGORITAM TRAZENJA U STABLU JE A*
-// njega implementiramo na sl nacin:
+
+//graf za testiranje A*
+(setq graf '((A 9 ((B 4) (C 6)))
+             (B 6 ((D 4) (A 2)))
+             (C 2 ((D 4) (E 1)))
+             (D 2 ((E 2) (F 3)))
+             (E 3 ((F 4)))
+             (F 0 (A 1))))
+//POZIV (a-zvezda graf '(((A 9))) 'F)
+
+// njega implementiramo na sl nacin: pomocu 8 funkcija, 1 glavna i 7 pomocnih
+glavna funkcija a-zvezda izdvaja listu cvorova koji cine put od polaznog do ciljnog cvora
+
+(defun a-zvezda (graf lp cilj)
+  (cond ((null lp) '())
+        ((equal (caar (last (car lp))) cilj) (car lp))
+        (t (a-zvezda graf (nova-lista graf lp) cilj))))
+
+//nova-lista - azurira listu parcijalnih puteva tako sto dodaje parcijalne nopve puteve i sortira u odgovarajucem redosledu po funkciji cene
+(defun nova-lista(graf lp)
+  (sortiraj(dodaj-puteve (nadji-puteve graf (car lp)) (cdr lp)) '<))
+
+//sortiraj uredjuje listu parcijalnih puteva tako sto poziva funkciju dodaj za prvi put iz ove liste i vec uredjeni ostatak liste puteva
+(defun sortiraj (lp op)
+  (cond ((null lp) '())
+        (t (dodaj (car lp) (sortiraj (cdr lp) op) op)))) 
+//dodaj - umetne putanju u uredjenu listu puteva tako sto koristi operator za poredjenje vrednosti funkcije cene
+
+(defun dodaj (put lp op)
+  (cond ((null lp) (list put))
+        ((apply op (list (cadar (last put))
+                         (cadar (last (car lp))))) (cons put lp))
+        (t (cons (car lp) (dodaj put (cdr lp) op)))))
+//nadji-puteve: Pripremi parametre za odredjivanje parcijalnih puteva koji nastavljaju trenutni put,pozivajuci je za praznu listu novih parcijalnih puteva
+
+(defun nadji-puteve (graf put)
+  (let* ((cvor (caar (last put)))
+         (cvor_ceo (assoc cvor graf))
+         (g (- (cadar (last put)) (cadr cvor_ceo))))
+    (nastavi-put '() put g (caddr cvor_ceo) graf)))
+
+//nastavi-put - lista parcijalnih putanja tako sot doda potomke na put i naravno izracuna funkciju cene (F)
+(defun nastavi-put (lp put g potomci graf)
+  (cond ((null potomci) lp)
+        (t (nastavi-put (cons (append put
+                                      (list (list (caar potomci)
+                                                  (+ g (cadr (assoc (caar potomci) graf))
+                                                     (cadar potomci))))) lp)
+                        put g (cdr potomci) graf))))
+
+//dodaj-puteve - azurira listu parc. puteva tako sto doda po jedan parc. put u listu postojecih
+(defun dodaj-puteve (putevi lp)
+  (cond ((null putevi) lp)
+        (t (dodaj-puteve (cdr putevi) (dodaj-put (car putevi) lp)))))
+
+//dodaj-put dodaje novi parcijalni put u postojecu listu parcijalnih puteva,samo ako ne postoji vec takav ili sa vecom cenom puta
+(defun dodaj-put (put lp)
+  (cond ((null lp) (list put))
+        ((and (equal (caar (last put)) (caar (last (car lp))))
+              (< (cadar (last put)) (cadar (last (car lp)))))
+         (cons put (cdr lp)))
+        (t (cons (car lp) (dodaj-put put (cdr lp))))))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

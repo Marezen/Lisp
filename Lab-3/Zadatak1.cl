@@ -5,6 +5,9 @@
 (setq graf '((A (B C)) (B (D E)) (C (F G)) (D (H I)) (E (I J)) (F (K)) (G (L M)) (H ()) (I ()) (J ()) 
              (K (A)) (L ( F)) (M ())))
 
+//Za prezentacije:
+(setq graf '( (A (B C)) (B (D E)) (C (G F)) (D (H)) (E (I G)) (F (J)) (H ()) (I (J)) (G (J)) (J ())))
+
 //lakse za proveru graf:
 (setq graf '((A (B)) (B (C D)) (C (G)) (D (F G)) (F (E)) (E ()) (G ())))
 
@@ -54,3 +57,8 @@
   (cond ((null potomci) '())
         ((member (car potomci) cvorovi) (novi-cvorovi (cdr potomci) cvorovi lvl))
         (:else (cons (list (car potomci) lvl) (novi-cvorovi (cdr potomci) cvorovi lvl)))))
+
+
+
+(nadji_dubinu graf '((A 1)) '0 '()) // poziv
+(visina (nadji-put graf '((A 1)) '())) // za onu iznad

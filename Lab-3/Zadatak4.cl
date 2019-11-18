@@ -19,7 +19,7 @@
 //prvi element,to je dakle Cvor i onda sa cadr se pristupi njegovoj dubini,i ona se oduzme od ukupnog broja cvorova i dobijemo konacno heuristiku
 
 (defun formiraj_assoc (graf l cvorovi)
-  (cond ((null l) (mapcar (lambda (x) (napravi x (length graf))) (cdr cvorovi)))
+  (cond ((null l) (mapcar (lambda (x) (heuristika x (length graf))) (cdr cvorovi)))
         (t(let* ((cvorovi1 (append cvorovi (list (car l))))
                  (potomci1 (dodaj-potomke graf (car l) (append (cdr l) cvorovi1)))
                  (l1 (append (cdr l) potomci1)))
@@ -35,11 +35,42 @@
 
 (defun novi-cvorovi (potomci cvorovi lvl)
   (cond ((null potomci) '())
-        ((member (car potomci) cvorovi) (novi-cvorovi (cdr potomci) cvorovi lvl))
+        ((ispitaj (car potomci) cvorovi) (novi-cvorovi (cdr potomci) cvorovi lvl))
         (:else (cons (list (car potomci) lvl) (novi-cvorovi (cdr potomci) cvorovi lvl)))))
 
-(defun napravi (cvor duzina)
+(defun ispitaj (cvor obradjeni)
+  (cond ((null obradjeni) '())
+        ((equal cvor (caar obradjeni)) t)
+        (:else (ispitaj cvor (cdr obradjeni)))))
+
+
+(defun heuristika (cvor duzina)
   (list (car cvor) (- duzina (cadr cvor))))
 
-
 (formiraj_assoc graf '((a 1)) '())
+
+// Brzi nacin!:
+
+(defun razlika (graf cvor potomci nivo obradjeni)
+  (cond ((null cvor) 
+         (if (null potomci) '()
+           (razlika graf potomci cvor (+ 1 nivo) obradjeni)))
+        (t (let* ((potomci1 (append potomci (dodaj-potomke graf (car cvor) (append obradjeni potomci cvor))))
+                  (cvor1 (cdr cvor))
+                  (obradjeni1 (append obradjeni (list (car cvor)))))
+             (append (list (list (car cvor) (- (length graf) nivo))) (razlika graf cvor1 potomci1 nivo obradjeni1))))))
+
+(defun dodaj-potomke (graf cvor cvorovi)
+  (cond ((null graf) '())
+        ((equal (caar graf) cvor)
+         (novi-cvorovi (cadar graf) cvorovi))
+        (t (dodaj-potomke (cdr graf) cvor cvorovi))))
+
+(defun novi-cvorovi (potomci cvorovi)
+  (cond ((null potomci) '())
+        ((member (car potomci) cvorovi)
+         (novi-cvorovi (cdr potomci) cvorovi))
+        (t (cons (car potomci)
+                 (novi-cvorovi (cdr potomci) cvorovi)))))
+
+

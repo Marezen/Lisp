@@ -25,7 +25,13 @@
         (:else (dodaj-potomke (cdr graf) cvor cvorovi))))
 
 (defun novi-cvorovi (potomci cvorovi lvl)
-  (cond ((null potomci) 0)
-        ((member (car potomci) cvorovi) (novi-cvorovi (cdr potomci) cvorovi lvl))
+  (cond ((null potomci) nil)
+        ((ispitaj (car potomci) cvorovi) (novi-cvorovi (cdr potomci) cvorovi lvl))
         (:else (cons (list (car potomci) lvl) (novi-cvorovi (cdr potomci) cvorovi lvl)))))
 
+(defun ispitaj (cvor obradjeni)
+  (cond ((null obradjeni) '())
+        ((equal cvor (caar obradjeni)) t)
+        (:else (ispitaj cvor (cdr obradjeni)))))
+
+//POZIV: (formiraj_assoc graf '((A 1)) '())

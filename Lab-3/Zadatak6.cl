@@ -9,16 +9,8 @@
 
 (defun napravi-stablo (graf cvorovi)
   (cond ((null cvorovi) graf)
-        (:else (let* ((graf1 (izbaci graf (car cvorovi))))
-                 (napravi-stablo graf1 (cdr cvorovi))))))
-
+        
 //treba nam funkcija koja ce da izbaci cvor
-(defun izbaci (graf cvor)
-  (cond ((null graf) '())
-        ((equal (caar graf) (cadr cvor)) (cons (car graf) (izbaci (cdr graf) cvor)))
-        (:else (cons (list (caar graf) (izbaci-potomke (cadar graf) (car cvor))) (izbaci (cdr graf) cvor)))))
-
-
 
 //funkcija za obilazak stabla po sirini!
 (defun obilazak (graf l cvorovi)
@@ -28,7 +20,6 @@
                  (l1 (append (cdr l) potomci1)))
             (obilazak graf l1 cvorovi1)))))
 
-//pomocne funkcije: bez dubine sada
 
 (defun dodaj-potomke (graf cvor cvorovi)
   (cond ((null graf) '())
