@@ -24,7 +24,6 @@
         ((member (caar graf) cvorovi) (razlika (cdr graf) cvorovi))
         (t(cons (car graf) (razlika (cdr graf) cvorovi)))))
 
-
 //funkcija za obilazak stabla po sirini!
 (defun obilazak (graf l cvorovi)
   (cond ((null l) cvorovi)
