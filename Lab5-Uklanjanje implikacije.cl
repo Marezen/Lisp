@@ -58,3 +58,18 @@ Teorijska podloga:
         (t (cons (izbaci_univerzalni (car lista)) (izbaci_univerzalni (cdr lista))))))
 
 ;;primer poziva: (and alfa  (or beta gama))  ->  {alfa}, {beta, gama} (skup klauzula)
+
+
+;;Sedmi zadatak , Konjunkcija :
+
+(defun konjunkcija (lista)
+	(cond
+		((null lista) '())
+  ;; proveri da li je AND prvi clan i da li je u posle Alfa OR,ako jeste treba da pita da li je 3 clan
+		((and (equal (car lista) 'and) (equal (caaddr lista) 'or))
+   (if (listp  (nth 1 lista)) ;; ovde pita da li je na mestu posle AND lista ili ne
+       ;;Ako je atom,onda njega samo ubaci u krajnju listu,a ako nije lista onda ce da kreira podlistu
+		(list (cdr (cadr lista))  (list (cadr (caddr lista)) (caddr (caddr lista))) (list (car lista) (caaddr lista)))
+		(list (list (cadr lista))  (list (cadr (caddr lista)) (caddr (caddr lista))) (list (car lista) (caaddr lista)) )))))
+;;Primer poziva: (konjunkcija '(and alfa  (or beta gama))) ---> ((ALFA) (BETA GAMA) (AND OR))
+;; kada je prvi deo listp=true : (konjunkcija '(and (not alfa) (or beta gama))) ---> ((ALFA) (BETA GAMA) (AND OR))
