@@ -1,5 +1,4 @@
 Teorijska podloga:
-
 ; 1) Primena rezolucije - Skupu aksioma i premisa se doda negacija teoreme, pa ako se dobije kontradikcija,
 ;    teorema je dokazana.
 ; 2) Literal je atomska formula ili njena negacija
@@ -19,7 +18,7 @@ Teorijska podloga:
 ;; Primer poziva funkcije : (eliminisi '(if (Pas Lesi) (Zivotinja Lesi)))
 ;; Jednostavniji : (eliminisi '(if a b))
 
-
+'(not((forall x) alfa)) -> ((exists x) (not alfa))
 
 
 ;;;Drugi korak : suzavanje negacije, ima vise pravila:
@@ -47,9 +46,6 @@ Teorijska podloga:
   )
 ;; za preostala 2 nisam siguran
 
-
-
-
 ;;;;;;Peti korak: Izbacivanje univerzalnog 
 
 (defun izbaci_univerzalni (lista)
@@ -59,6 +55,17 @@ Teorijska podloga:
 
 ;;primer poziva: (and alfa  (or beta gama))  ->  {alfa}, {beta, gama} (skup klauzula)
 
+;;;;;Sesti korak : Konjunktivna normalna forma: (OR alfa (AND beta gama))
+;Primer poziva: (k_forma '(OR alfa (AND beta gama))) --->  (AND (OR(alfa beta)) (OR (alfa gama)))
+
+(defun k_forma (lista)
+                (cond
+                 ((or(null lista) (atom lista)) '())
+                 ((and (equal (car lista) 'or) (equal (caaddr lista) 'and))
+                      (list (caaddr lista) 
+                             (list (car lista) (list (cadr lista) (cadr(caddr lista))))
+                             (list (car lista) (list (cadr lista) (caddr(caddr lista)))) ))
+                 (t (format t "~% Nije moguce kreirati konjunktivnu formu na osnovu zadatog izraza: ~a " lista))))
 
 ;;Sedmi zadatak , Konjunkcija :
 
@@ -71,5 +78,11 @@ Teorijska podloga:
        ;;Ako je atom,onda njega samo ubaci u krajnju listu,a ako nije lista onda ce da kreira podlistu
 		(list (cdr (cadr lista))  (list (cadr (caddr lista)) (caddr (caddr lista))) (list (car lista) (caaddr lista)))
 		(list (list (cadr lista))  (list (cadr (caddr lista)) (caddr (caddr lista))) (list (car lista) (caaddr lista)) )))))
+
 ;;Primer poziva: (konjunkcija '(and alfa  (or beta gama))) ---> ((ALFA) (BETA GAMA) (AND OR))
 ;; kada je prvi deo listp=true : (konjunkcija '(and (not alfa) (or beta gama))) ---> ((ALFA) (BETA GAMA) (AND OR))
+
+
+
+
+
